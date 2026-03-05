@@ -1,73 +1,80 @@
-# React + TypeScript + Vite
+# StreamChat
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A real-time chat application with streaming LLM responses, persistent history, and Markdown rendering.
 
-Currently, two official plugins are available:
+## Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. **Install dependencies**
 
-## React Compiler
+   ```bash
+   npm install
+   ```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+2. **Environment variables**
 
-## Expanding the ESLint configuration
+   Copy the example file and set your Groq API key:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+   ```bash
+   cp .env.example .env.local
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+   Edit `.env.local`:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+   - `VITE_API_KEY` — **Required.** Your Groq API key.
+   - `VITE_API_BASE_URL` — Optional. Default: `https://api.groq.com/openai/v1`.
+   - `VITE_MODEL` — Optional. Default: `llama-3.3-70b-versatile`.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+3. **Run the app**
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+   ```bash
+   npm run dev
+   ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+   Open the URL shown in the terminal (e.g. http://localhost:5173).
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## LLM choice
+
+- **Provider:** [Groq](https://groq.com)
+- **Model:** `llama-3.3-70b-versatile`
+
+Groq was chosen for fast inference and a simple OpenAI-compatible API. The 70B model is suitable for a general-purpose assistant and supports streaming via Server-Sent Events (SSE).
+
+## Architecture
+
+### State management (Zustand)
+
+Zustand is used instead of `useReducer` + `useContext` because:
+
+- No provider wrapper; the store is used directly in hooks.
+- Minimal boilerplate and a small API surface.
+- Good DevTools support for debugging.
+- Fits a single-page chat where one global store is enough.
+
+### Code organization
+
+- **`src/api/`** — LLM provider (Groq SSE client).
+- **`src/components/`** — UI: `ChatWindow`, `ChatInput`, `MessageBubble`, `MarkdownRenderer`.
+- **`src/hooks/`** — `useChat` (orchestrates store + API + persistence), `useLocalStorage<T>`.
+- **`src/store/`** — Zustand chat store (messages, phase).
+- **`src/types/`** — Shared TypeScript types and `ChatPhase` discriminated union.
+
+Calls to the LLM are made directly from the browser; there is no backend or proxy.
+
+### Enter key behavior
+
+- **Enter** — Sends the message.
+- **Shift+Enter** — Inserts a new line in the input.
+
+## What would be improved with more time
+
+- **Backend proxy** — Move the API key to a server to avoid exposing it in the frontend.
+- **E2E tests** — Playwright/Cypress for the full send → stream → history flow.
+- **Richer errors** — Differentiate rate limits, auth, and network errors with clearer messages.
+- **Conversation list** — Multiple chats with titles and sidebar navigation.
+
+## Known limitations and trade-offs
+
+- **API key in the frontend** — Suitable only for development or demo; production should use a backend.
+- **No authentication** — Single-user, local-only.
+- **Chat history** — Stored only in `localStorage`; no cloud sync.
+- **No attachments** — Text-only; no images or voice input.

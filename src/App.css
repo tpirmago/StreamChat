@@ -1,42 +1,98 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 100%;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.app__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
-@keyframes logo-spin {
+.app__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.app__new-chat {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.app__new-chat:hover {
+  background: var(--surface-hover);
+}
+
+.app__new-chat:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.app__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 1rem 1rem;
+}
+
+.app__loading {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: center;
+  padding: 0.5rem 0;
+  flex-shrink: 0;
+}
+
+.app__loading-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: loading-bounce 0.6s ease-in-out infinite alternate;
+}
+
+.app__loading-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.app__loading-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes loading-bounce {
   from {
-    transform: rotate(0deg);
+    transform: translateY(0);
+    opacity: 0.6;
   }
   to {
-    transform: rotate(360deg);
+    transform: translateY(-4px);
+    opacity: 1;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@media (min-width: 1280px) {
+  .app {
+    max-width: 1280px;
+    margin: 0 auto;
   }
-}
 
-.card {
-  padding: 2em;
-}
+  .app__header {
+    padding: 1rem 1.5rem;
+  }
 
-.read-the-docs {
-  color: #888;
+  .app__main {
+    padding: 0 1.5rem 1.5rem;
+  }
 }

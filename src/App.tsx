@@ -1,35 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useChat } from "./hooks/useChat.ts";
+import "./App.css";
+import { ChatInput } from "./components/ChatInput.tsx";
+import { ChatWindow } from "./components/ChatWindow.tsx";
 
-function App() {
-  const [count, setCount] = useState(0)
+const SYSTEM_PROMPT = "You are a helpful assistant.";
+
+function App(): React.ReactElement {
+  const { messages, phase, sendMessage, abort, clearHistory, retry } = useChat(
+    SYSTEM_PROMPT
+  );
+
+  const isLoading = phase.phase === "loading";
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div className="app">
+      <header className="app__header">
+        <h1 className="app__title">StreamChat</h1>
+        <button
+          type="button"
+          className="app__new-chat"
+          onClick={clearHistory}
+          aria-label="Start new chat"
+        >
+          New chat
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      </header>
+      <main className="app__main">
+        <ChatWindow messages={messages} phase={phase} />
+        {isLoading && (
+          <div className="app__loading" role="status" aria-live="polite">
+            <span className="app__loading-dot" />
+            <span className="app__loading-dot" />
+            <span className="app__loading-dot" />
+          </div>
+        )}
+        <ChatInput
+          phase={phase}
+          onSend={sendMessage}
+          onStop={abort}
+          onRetry={retry}
+          placeholder="Type a message... (Enter to send)"
+        />
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
