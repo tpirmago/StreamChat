@@ -7,15 +7,26 @@ export interface ChatWindowProps {
   phase: ChatPhase;
 }
 
+function scrollToBottom(el: HTMLElement | null): void {
+  if (!el) return;
+  const run = (): void => {
+    el.scrollTop = el.scrollHeight - el.clientHeight;
+  };
+  requestAnimationFrame(() => {
+    run();
+    requestAnimationFrame(run);
+  });
+}
+
 export function ChatWindow({ messages, phase }: ChatWindowProps): React.ReactElement {
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    scrollToBottom(scrollContainerRef.current);
   }, [messages.length, phase]);
 
   return (
-    <div className="chat-window" role="log" aria-live="polite">
+    <div ref={scrollContainerRef} className="chat-window" role="log" aria-live="polite">
       <div className="chat-window__messages">
         {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} />
@@ -33,7 +44,7 @@ export function ChatWindow({ messages, phase }: ChatWindowProps): React.ReactEle
           />
         )}
       </div>
-      <div ref={bottomRef} className="chat-window__sentinel" aria-hidden="true" />
+      <div className="chat-window__sentinel" aria-hidden="true" />
     </div>
   );
 }

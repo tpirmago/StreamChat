@@ -1,5 +1,9 @@
 import { useState } from "react";
+import { useMediaQuery } from "../hooks/useMediaQuery.ts";
 import type { ChatPhase } from "../types/chat.ts";
+
+const PLACEHOLDER_MOBILE = "Type a message...";
+const PLACEHOLDER_DESKTOP = "Type a message... (Enter to send)";
 
 export interface ChatInputProps {
   phase: ChatPhase;
@@ -16,8 +20,12 @@ export function ChatInput({
   onStop,
   onRetry,
   disabled = false,
-  placeholder = "Type a message... (Enter to send)",
+  placeholder,
 }: ChatInputProps): React.ReactElement {
+  const isDesktop = useMediaQuery("(min-width: 1280px)");
+  const resolvedPlaceholder =
+    placeholder ?? (isDesktop ? PLACEHOLDER_DESKTOP : PLACEHOLDER_MOBILE);
+
   const [inputValue, setInputValue] = useState("");
 
   const isStreaming = phase.phase === "loading" || phase.phase === "streaming";
@@ -58,7 +66,7 @@ export function ChatInput({
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           disabled={disabled || isStreaming}
           rows={1}
           aria-label="Message input"

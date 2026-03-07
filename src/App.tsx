@@ -27,20 +27,21 @@ function App(): React.ReactElement {
       </header>
       <main className="app__main">
         <ChatWindow messages={messages} phase={phase} />
-        {isLoading && (
-          <div className="app__loading" role="status" aria-live="polite">
-            <span className="app__loading-dot" />
-            <span className="app__loading-dot" />
-            <span className="app__loading-dot" />
-          </div>
-        )}
-        <ChatInput
-          phase={phase}
-          onSend={sendMessage}
-          onStop={abort}
-          onRetry={retry}
-          placeholder="Type a message... (Enter to send)"
-        />
+        <footer className="app__footer">
+          {isLoading && (
+            <div className="app__loading" role="status" aria-live="polite">
+              <span className="app__loading-dot" />
+              <span className="app__loading-dot" />
+              <span className="app__loading-dot" />
+            </div>
+          )}
+          <ChatInput
+            phase={phase}
+            onSend={sendMessage}
+            onStop={abort}
+            onRetry={retry}
+          />
+        </footer>
       </main>
     </div>
   );
