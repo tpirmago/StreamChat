@@ -2,9 +2,16 @@ import { useCallback, useEffect, useRef } from "react";
 import { createGroqProvider } from "../api/llm.ts";
 import { useChatStore } from "../store/chatStore.ts";
 import type { ChatMessage, ChatPhase } from "../types/chat.ts";
-import { useLocalStorage } from "./useLocalStorage.ts";
 
 const STORAGE_KEY = "streamchat-messages";
+
+function saveMessages(msgs: ReadonlyArray<ChatMessage>): void {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(msgs));
+  } catch {
+    // ignore quota / disabled storage
+  }
+}
 
 function isAbortError(err: unknown): boolean {
   return err instanceof DOMException && err.name === "AbortError";
@@ -21,10 +28,6 @@ export interface UseChatReturn {
 
 export function useChat(systemPrompt?: string): UseChatReturn {
   const { messages, phase, setMessages, setPhase, hydrate } = useChatStore();
-  const [, setStoredMessages] = useLocalStorage<ChatMessage[]>(
-    STORAGE_KEY,
-    []
-  );
   const abortControllerRef = useRef<AbortController | null>(null);
   const hasHydrated = useRef(false);
 
@@ -53,8 +56,8 @@ export function useChat(systemPrompt?: string): UseChatReturn {
   }, [hydrate]);
 
   useEffect(() => {
-    setStoredMessages(messages);
-  }, [messages, setStoredMessages]);
+    saveMessages(messages);
+  }, [messages]);
 
   const provider = useRef(createGroqProvider(systemPrompt ?? "You are a helpful assistant."));
   provider.current = createGroqProvider(systemPrompt ?? "You are a helpful assistant.");
@@ -66,6 +69,7 @@ export function useChat(systemPrompt?: string): UseChatReturn {
   const clearHistory = useCallback(() => {
     setMessages([]);
     setPhase({ phase: "idle" });
+    saveMessages([]);
   }, [setMessages, setPhase]);
 
   const retry = useCallback(() => {

@@ -5,9 +5,12 @@
   --surface: #25252a;
   --surface-hover: #2e2e34;
   --border-color: #3a3a42;
-  --focus: #646cff;
-  --user-bubble: #3b82f6;
-  --assistant-bubble: #2e2e34;
+  --focus: #4000fd;
+  --user-bubble: rgba(64, 0, 253, 0.75);
+  --user-bubble-text: #fff;
+  --assistant-bubble: rgba(255, 255, 255, 0.12);
+  --assistant-bubble-text: rgba(255, 255, 255, 0.92);
+  --send-btn: #4000fd;
   --error-bg: rgba(239, 68, 68, 0.15);
   --error-text: #f87171;
   --inline-code-bg: rgba(255, 255, 255, 0.1);
@@ -22,8 +25,11 @@
     --surface: #ffffff;
     --surface-hover: #f0f0f2;
     --border-color: #e0e0e4;
-    --user-bubble: #2563eb;
-    --assistant-bubble: #e8e8ec;
+    --user-bubble: rgba(64, 0, 253, 0.8);
+    --user-bubble-text: #fff;
+    --assistant-bubble: rgba(0, 0, 0, 0.06);
+    --assistant-bubble-text: #1a1a1e;
+    --send-btn: #4000fd;
     --error-bg: rgba(239, 68, 68, 0.1);
     --error-text: #dc2626;
     --inline-code-bg: rgba(0, 0, 0, 0.06);
@@ -102,19 +108,24 @@ body {
 }
 
 .message-bubble__content {
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  line-height: 1.5;
+  padding: 0.625rem 0.875rem;
+  border-radius: 18px;
+  line-height: 1.4;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: none;
 }
 
 .message-bubble--user .message-bubble__content {
   background: var(--user-bubble);
-  color: #fff;
+  color: var(--user-bubble-text);
+  border-bottom-right-radius: 4px;
 }
 
 .message-bubble--assistant .message-bubble__content {
   background: var(--assistant-bubble);
-  color: var(--text);
+  color: var(--assistant-bubble-text);
+  border-bottom-left-radius: 4px;
 }
 
 .message-bubble__text {
@@ -237,7 +248,7 @@ body {
 .chat-input__row {
   display: flex;
   gap: 0.5rem;
-  align-items: flex-end;
+  align-items: stretch;
 }
 
 .chat-input__field {
@@ -272,7 +283,7 @@ body {
 
 .chat-input__btn {
   flex-shrink: 0;
-  padding: 0.6rem 1.25rem;
+  padding: 0 1.25rem;
   font-size: 0.9375rem;
   font-weight: 500;
   border-radius: 10px;
@@ -287,7 +298,7 @@ body {
 }
 
 .chat-input__btn--send {
-  background: var(--user-bubble);
+  background: var(--send-btn);
   color: #fff;
 }
 
