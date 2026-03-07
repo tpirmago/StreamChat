@@ -3,7 +3,7 @@ import { useMediaQuery } from "../hooks/useMediaQuery.ts";
 import type { ChatPhase } from "../types/chat.ts";
 
 const PLACEHOLDER_MOBILE = "Type a message...";
-const PLACEHOLDER_DESKTOP = "Type a message... (Enter to send)";
+const PLACEHOLDER_DESKTOP = "Type a message...";
 
 export interface ChatInputProps {
   phase: ChatPhase;
