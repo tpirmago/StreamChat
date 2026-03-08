@@ -1,6 +1,13 @@
+// React
 import { useCallback, useEffect, useRef } from "react";
-import { createGroqProvider } from "../api/llm.ts";
+
+// Context / State
 import { useChatStore } from "../store/chatStore.ts";
+
+// Services / API
+import { createGroqProvider } from "../api/llm.ts";
+
+// Constants / Types
 import type { ChatMessage, ChatPhase } from "../types/chat.ts";
 
 const STORAGE_KEY = "streamchat-messages";
@@ -8,8 +15,8 @@ const STORAGE_KEY = "streamchat-messages";
 function saveMessages(msgs: ReadonlyArray<ChatMessage>): void {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(msgs));
-  } catch {
-    // ignore quota / disabled storage
+  } catch (err) {
+    console.error("Failed to save messages to localStorage:", err);
   }
 }
 
@@ -50,8 +57,8 @@ export function useChat(systemPrompt?: string): UseChatReturn {
         );
         if (valid.length > 0) hydrate(valid);
       }
-    } catch {
-      // ignore invalid stored data
+    } catch (err) {
+      console.error("Failed to hydrate messages from localStorage:", err);
     }
   }, [hydrate]);
 

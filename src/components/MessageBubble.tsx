@@ -1,5 +1,8 @@
-import type { ChatMessage as ChatMessageType } from "../types/chat.ts";
+// Components
 import { MarkdownRenderer } from "./MarkdownRenderer.tsx";
+
+// Constants / Types
+import type { ChatMessage as ChatMessageType } from "../types/chat.ts";
 
 export interface MessageBubbleProps {
   message: ChatMessageType;

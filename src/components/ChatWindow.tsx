@@ -1,6 +1,11 @@
+// React
 import { useCallback, useEffect, useRef } from "react";
-import type { ChatMessage, ChatPhase } from "../types/chat.ts";
+
+// Components
 import { MessageBubble } from "./MessageBubble.tsx";
+
+// Constants / Types
+import type { ChatMessage, ChatPhase } from "../types/chat.ts";
 
 export interface ChatWindowProps {
   messages: ReadonlyArray<ChatMessage>;

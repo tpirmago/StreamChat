@@ -1,5 +1,8 @@
-import type { ChatMessage, ChatPhase } from "../types/chat.ts";
+// External libraries
 import { create } from "zustand";
+
+// Constants / Types
+import type { ChatMessage, ChatPhase } from "../types/chat.ts";
 
 const initialPhase: ChatPhase = { phase: "idle" };
 

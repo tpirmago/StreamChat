@@ -1,3 +1,4 @@
+// React
 import { useCallback, useEffect, useState } from "react";
 
 function getStoredValue<T>(key: string, initialValue: T): T {
@@ -6,7 +7,8 @@ function getStoredValue<T>(key: string, initialValue: T): T {
     const raw = window.localStorage.getItem(key);
     if (raw === null) return initialValue;
     return JSON.parse(raw) as T;
-  } catch {
+  } catch (err) {
+    console.error(`Failed to read "${key}" from localStorage:`, err);
     return initialValue;
   }
 }
@@ -20,8 +22,8 @@ export function useLocalStorage<T>(
   useEffect(() => {
     try {
       window.localStorage.setItem(key, JSON.stringify(state));
-    } catch {
-      // ignore quota / disabled storage
+    } catch (err) {
+      console.error(`Failed to write "${key}" to localStorage:`, err);
     }
   }, [key, state]);
 

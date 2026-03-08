@@ -1,7 +1,12 @@
+// Hooks
 import { useChat } from "./hooks/useChat.ts";
-import "./App.css";
+
+// Components
 import { ChatInput } from "./components/ChatInput.tsx";
 import { ChatWindow } from "./components/ChatWindow.tsx";
+
+// Styles
+import "./App.css";
 
 const SYSTEM_PROMPT = "You are a helpful assistant.";
 

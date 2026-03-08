@@ -1,5 +1,10 @@
+// React
 import { useState } from "react";
+
+// Hooks
 import { useMediaQuery } from "../hooks/useMediaQuery.ts";
+
+// Constants / Types
 import type { ChatPhase } from "../types/chat.ts";
 
 const PLACEHOLDER_MOBILE = "Type a message...";

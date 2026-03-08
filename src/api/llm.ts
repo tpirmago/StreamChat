@@ -1,3 +1,4 @@
+// Constants / Types
 import type { ChatMessage, LLMProvider, SendMessageOptions } from "../types/chat.ts";
 
 const DEFAULT_BASE_URL = "https://api.groq.com/openai/v1";
@@ -48,7 +49,8 @@ export function parseSSEDataLine(line: string): string | null {
     const chunk: GroqChunk = JSON.parse(jsonStr) as GroqChunk;
     const content = chunk.choices?.[0]?.delta?.content;
     return typeof content === "string" ? content : null;
-  } catch {
+  } catch (err) {
+    console.error("Failed to parse SSE chunk JSON:", err);
     return null;
   }
 }
