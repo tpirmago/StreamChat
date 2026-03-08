@@ -14,7 +14,7 @@ export interface MarkdownRendererProps {
 export function MarkdownRenderer({ content }: MarkdownRendererProps): React.ReactElement {
   const components: Components = {
     pre: ({ children }) => <pre className="hljs-wrapper">{children}</pre>,
-    code: ({ node, className, children, ...rest }) => {
+    code: ({ className, children, ...rest }) => {
       const isInline = !className;
       if (isInline) {
         return (

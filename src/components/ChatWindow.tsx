@@ -101,7 +101,7 @@ export function ChatWindow({ messages, phase }: ChatWindowProps): React.ReactEle
                 id: "streaming",
                 role: "assistant",
                 content: "",
-                createdAt: Date.now(),
+                createdAt: 0,
               }}
               streamingContent={phase.partial}
             />

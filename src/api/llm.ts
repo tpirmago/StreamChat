@@ -18,6 +18,7 @@ interface GroqChunk {
   choices?: GroqChunkChoice[];
 }
 
+/** Reads LLM configuration from env vars. Throws if VITE_API_KEY is missing. Falls back to defaults for base URL and model. */
 function getConfig(): { baseUrl: string; model: string; apiKey: string } {
   const apiKey = import.meta.env.VITE_API_KEY;
   if (typeof apiKey !== "string" || !apiKey.trim()) {
@@ -55,6 +56,11 @@ export function parseSSEDataLine(line: string): string | null {
   }
 }
 
+/**
+ * Reads a binary SSE stream line by line and calls onChunk for each text content piece.
+ * Uses a rolling buffer to handle chunks that split across packet boundaries.
+ * Respects the AbortSignal and stops reading immediately when aborted.
+ */
 async function streamSSE(
   reader: ReadableStreamDefaultReader<Uint8Array>,
   onChunk: (text: string) => void,
@@ -80,6 +86,7 @@ async function streamSSE(
   }
 }
 
+/** Converts the internal chat history to the Groq API message format, prepending the system prompt if provided. */
 function toGroqMessages(
   systemPrompt: string,
   messages: ReadonlyArray<ChatMessage>
@@ -96,6 +103,7 @@ function toGroqMessages(
   return groq;
 }
 
+/** Factory that creates an LLMProvider backed by the Groq OpenAI-compatible API with streaming enabled. */
 export function createGroqProvider(systemPrompt: string = "You are a helpful assistant."): LLMProvider {
   return {
     async sendMessage(options: SendMessageOptions): Promise<void> {

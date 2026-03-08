@@ -1,6 +1,10 @@
 // React
 import { useCallback, useEffect, useState } from "react";
 
+/**
+ * Reads and deserializes a value from localStorage for use as the initial useState value.
+ * Returns initialValue if the key is missing, the environment has no window, or parsing fails.
+ */
 function getStoredValue<T>(key: string, initialValue: T): T {
   if (typeof window === "undefined") return initialValue;
   try {

@@ -24,6 +24,7 @@ function isAbortError(err: unknown): boolean {
   return err instanceof DOMException && err.name === "AbortError";
 }
 
+/** Type guard that validates the shape of an unknown value parsed from localStorage before hydrating the store. */
 function isValidChatMessage(m: unknown): m is ChatMessage {
   return (
     m !== null &&
@@ -35,6 +36,10 @@ function isValidChatMessage(m: unknown): m is ChatMessage {
   );
 }
 
+/**
+ * Reads the persisted message history from localStorage on startup and loads it into the store.
+ * Filters out any malformed entries before hydrating to guard against corrupted stored data.
+ */
 function loadStoredMessages(): void {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
