@@ -24,6 +24,30 @@ function isAbortError(err: unknown): boolean {
   return err instanceof DOMException && err.name === "AbortError";
 }
 
+function isValidChatMessage(m: unknown): m is ChatMessage {
+  return (
+    m !== null &&
+    typeof m === "object" &&
+    "id" in m &&
+    "role" in m &&
+    "content" in m &&
+    "createdAt" in m
+  );
+}
+
+function loadStoredMessages(): void {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed) || parsed.length === 0) return;
+    const valid = parsed.filter(isValidChatMessage);
+    if (valid.length > 0) useChatStore.getState().setMessages(valid);
+  } catch (err) {
+    console.error("Failed to hydrate messages from localStorage:", err);
+  }
+}
+
 export interface UseChatReturn {
   messages: ReadonlyArray<ChatMessage>;
   phase: ChatPhase;
@@ -34,41 +58,15 @@ export interface UseChatReturn {
 }
 
 export function useChat(systemPrompt?: string): UseChatReturn {
-  const { messages, phase, setMessages, setPhase, hydrate } = useChatStore();
+  // Data from custom hooks
+  const { messages, phase, setMessages, setPhase } = useChatStore();
+
+  // useRef references
   const abortControllerRef = useRef<AbortController | null>(null);
-  const hasHydrated = useRef(false);
-
-  useEffect(() => {
-    if (hasHydrated.current) return;
-    hasHydrated.current = true;
-    try {
-      const raw = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as unknown;
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        const valid = parsed.filter(
-          (m): m is ChatMessage =>
-            m !== null &&
-            typeof m === "object" &&
-            "id" in m &&
-            "role" in m &&
-            "content" in m &&
-            "createdAt" in m
-        );
-        if (valid.length > 0) hydrate(valid);
-      }
-    } catch (err) {
-      console.error("Failed to hydrate messages from localStorage:", err);
-    }
-  }, [hydrate]);
-
-  useEffect(() => {
-    saveMessages(messages);
-  }, [messages]);
-
   const provider = useRef(createGroqProvider(systemPrompt ?? "You are a helpful assistant."));
   provider.current = createGroqProvider(systemPrompt ?? "You are a helpful assistant.");
 
+  // useCallback functions
   const abort = useCallback(() => {
     abortControllerRef.current?.abort();
   }, []);
@@ -134,6 +132,15 @@ export function useChat(systemPrompt?: string): UseChatReturn {
     },
     [setMessages, setPhase]
   );
+
+  // Side effects
+  useEffect(() => {
+    loadStoredMessages();
+  }, []);
+
+  useEffect(() => {
+    saveMessages(messages);
+  }, [messages]);
 
   return {
     messages,

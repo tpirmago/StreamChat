@@ -38,35 +38,42 @@ export function ChatWindow({ messages, phase }: ChatWindowProps): React.ReactEle
     const newMessageAdded = messages.length > prevLength;
     const streamingJustStarted = prevPhase !== "streaming" && phase.phase === "streaming";
 
-    // A new completed message was added to the list
-    if (newMessageAdded) {
+    function handleNewMessage(container: HTMLDivElement): void {
       const lastMsg = messages[messages.length - 1];
       if (lastMsg?.role === "user") {
-        // Scroll to bottom so user sees their own sent message
-        c.scrollTop = c.scrollHeight;
+        container.scrollTop = container.scrollHeight;
         shouldFollowRef.current = true;
       }
-      return;
     }
 
-    // Streaming just started: scroll to show the beginning of the reply
-    if (streamingJustStarted) {
+    function handleStreamingStart(container: HTMLDivElement): void {
       const el = streamingRef.current;
       if (el) {
         const elTop = el.getBoundingClientRect().top;
-        const cTop = c.getBoundingClientRect().top;
-        c.scrollTop += elTop - cTop;
+        const cTop = container.getBoundingClientRect().top;
+        container.scrollTop += elTop - cTop;
       }
       shouldFollowRef.current = true;
-      return;
     }
 
-    // Streaming chunk: only scroll if new content grew below the visible area
-    if (phase.phase === "streaming" && shouldFollowRef.current) {
-      const maxScroll = c.scrollHeight - c.clientHeight;
-      if (maxScroll > c.scrollTop) {
-        c.scrollTop = maxScroll;
+    function handleStreamingChunk(container: HTMLDivElement): void {
+      if (!shouldFollowRef.current) return;
+      const maxScroll = container.scrollHeight - container.clientHeight;
+      if (maxScroll > container.scrollTop) {
+        container.scrollTop = maxScroll;
       }
+    }
+
+    if (newMessageAdded) {
+      handleNewMessage(c);
+      return;
+    }
+    if (streamingJustStarted) {
+      handleStreamingStart(c);
+      return;
+    }
+    if (phase.phase === "streaming") {
+      handleStreamingChunk(c);
     }
   }, [messages, phase]);
 

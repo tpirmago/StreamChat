@@ -11,7 +11,6 @@ interface ChatState {
   phase: ChatPhase;
   setMessages: (value: ChatMessage[] | ((prev: ChatMessage[]) => ChatMessage[])) => void;
   setPhase: (phase: ChatPhase) => void;
-  hydrate: (messages: ChatMessage[]) => void;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
@@ -22,5 +21,4 @@ export const useChatStore = create<ChatState>((set) => ({
       messages: typeof value === "function" ? value(state.messages) : value,
     })),
   setPhase: (phase) => set({ phase }),
-  hydrate: (messages) => set({ messages }),
 }));

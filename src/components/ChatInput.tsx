@@ -1,14 +1,10 @@
 // React
 import { useState } from "react";
 
-// Hooks
-import { useMediaQuery } from "../hooks/useMediaQuery.ts";
-
 // Constants / Types
 import type { ChatPhase } from "../types/chat.ts";
 
-const PLACEHOLDER_MOBILE = "Type a message...";
-const PLACEHOLDER_DESKTOP = "Type a message...";
+const PLACEHOLDER = "Type a message...";
 
 export interface ChatInputProps {
   phase: ChatPhase;
@@ -27,12 +23,11 @@ export function ChatInput({
   disabled = false,
   placeholder,
 }: ChatInputProps): React.ReactElement {
-  const isDesktop = useMediaQuery("(min-width: 1280px)");
-  const resolvedPlaceholder =
-    placeholder ?? (isDesktop ? PLACEHOLDER_DESKTOP : PLACEHOLDER_MOBILE);
-
+  // Variables
   const [inputValue, setInputValue] = useState("");
 
+  // Local constants
+  const resolvedPlaceholder = placeholder ?? PLACEHOLDER;
   const isStreaming = phase.phase === "loading" || phase.phase === "streaming";
   const isError = phase.phase === "error";
 
