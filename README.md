@@ -8,7 +8,7 @@ A minimal, streaming AI chat application built with React, TypeScript, and Zusta
 
 - Real-time token streaming via Server-Sent Events (SSE)
 - Markdown rendering with syntax highlighting
-- Conversation history persisted to `localStorage`
+- Chat history survives page refreshes
 - Stop/abort an in-flight response at any time
 - Responsive layout for mobile and desktop
 - No backend required — runs entirely in the browser
@@ -16,13 +16,6 @@ A minimal, streaming AI chat application built with React, TypeScript, and Zusta
 ---
 
 ## Setup
-
-### 1. Clone the repository
-
-```bash
-git clone <repo-url>
-cd StreamChat
-```
 
 ### 2. Install dependencies
 
@@ -32,7 +25,7 @@ npm install
 
 ### 3. Configure environment variables
 
-Copy the example file and fill in your values:
+Copy the example file:
 
 ```bash
 cp .env.example .env.local
@@ -46,13 +39,6 @@ Open `.env.local` and set the following:
 | `VITE_API_BASE_URL` | No | API base URL. Defaults to `https://api.groq.com/openai/v1` |
 | `VITE_MODEL` | No | Model ID to use. Defaults to `llama-3.3-70b-versatile` |
 
-Example `.env.local`:
-
-```env
-VITE_API_KEY=gsk_your_api_key_here
-VITE_API_BASE_URL=
-VITE_MODEL=
-```
 
 ### 4. Start the development server
 
@@ -87,7 +73,7 @@ src/
 
 ### Assistant role
 
-The assistant is configured as a **universal, general-purpose assistant** with the system prompt `"You are a helpful assistant."` This makes the app broadly useful across coding, writing, research, and everyday questions without locking it to a specific domain. The system prompt is defined as a constant in `App.tsx` and passed through `useChat`, so it is easy to customize for a more specific role without touching the core logic.
+The assistant is configured as a **universal, general-purpose assistant** with the system prompt `"You are a helpful assistant."` This makes the app broadly useful across coding, writing, research, and everyday questions without locking it to a specific domain. The system prompt is defined as a constant in `App.tsx`.
 
 ---
 
@@ -95,10 +81,10 @@ The assistant is configured as a **universal, general-purpose assistant** with t
 
 **Groq** was chosen for two reasons:
 
-1. **Speed.** Groq's LPU hardware delivers inference at hundreds of tokens per second. This makes streaming feel genuinely real-time rather than just a visual trick — for a chat UI where perceived responsiveness matters, this is a meaningful advantage over GPU-backed inference endpoints.
-2. **OpenAI-compatible API.** Groq exposes the same `/chat/completions` endpoint and SSE streaming format as OpenAI, so the integration code is straightforward and the provider can be swapped out later by changing only the base URL and API key — no other code changes needed.
+1. **Speed.** Groq delivers inference at hundreds of tokens per second. This makes streaming feel real-time.
+2. **OpenAI-compatible API.** Groq exposes the same `/chat/completions` endpoint and SSE streaming format as OpenAI, so the integration code is straightforward and the provider can be swapped out later.
 
-**`llama-3.3-70b-versatile`** was selected because it is one of the strongest openly available models at the 70B scale — capable across coding, reasoning, and general conversation — and is available on Groq's free tier, making it ideal for development and demos without incurring cost.
+**`llama-3.3-70b-versatile`** was selected because it is one of the strongest openly available models capable across coding, reasoning, and general conversation. It is available on Groq's free tier, making it ideal for development and demos.
 
 ---
 
@@ -115,7 +101,7 @@ Zustand was chosen over React Context + `useReducer` (or heavier alternatives li
 
 ### Architectural decisions
 
-The codebase is split into four layers, each with a single, well-defined responsibility:
+The codebase is split into four layers, each with a single responsibility:
 
 | Layer | Purpose |
 |---|---|
@@ -148,18 +134,14 @@ The app maintains a single linear conversation. There is no concept of multiple 
 Chat history is saved to `localStorage`, which is browser-local. Clearing browser data, opening a different browser, or switching devices starts with an empty history. There is no sync or backup.
 
 **No user authentication**
-There is no login or account system. The app is inherently single-user and local-only.
+There is no login or account system.
 
 ---
 
-## What Could Be Improved With More Time
+## What Could Be Improved 
 
 - **Backend proxy** — Moving the API key to a server-side proxy would eliminate the frontend key exposure problem and enable request logging, rate limiting, and caching.
 - **Multi-chat support** — A sidebar with named, independently stored conversations would make the app significantly more useful for ongoing work.
 - **Cloud persistence** — Syncing history to a database would allow access across devices and survive browser data clears.
-- **Configurable system prompt** — Exposing the system prompt through a settings panel would let users change the assistant's role or personality without touching code.
-- **Incremental Markdown rendering** — Currently, Markdown is only rendered once a response is complete; the in-progress stream is shown as plain text. Rendering Markdown incrementally during streaming would improve the experience.
-- **Model selector** — A dropdown to switch models at runtime would improve developer ergonomics and make it easier to compare outputs without editing `.env.local`.
 - **Better error differentiation** — The current error state shows a generic message and a retry button. Distinguishing rate-limit errors, auth failures, and network errors would help users self-diagnose and recover faster.
-- **E2E tests** — Playwright or Cypress tests for the full send → stream → history flow would give higher confidence than unit tests alone.
-- **Token usage display** — Showing prompt and completion token counts would help users stay aware of context window limits and API costs.
+- **E2E tests** — Tests for the full flow (send → stream → history) would give higher confidence than unit tests alone.
