@@ -4,6 +4,9 @@ import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
 
+// Styles
+import "./MarkdownRenderer.css";
+
 export interface MarkdownRendererProps {
   content: string;
 }

@@ -4,6 +4,9 @@ import { useState } from "react";
 // Constants / Types
 import type { ChatPhase } from "../types/chat.ts";
 
+// Styles
+import "./ChatInput.css";
+
 const PLACEHOLDER = "Type a message...";
 
 export interface ChatInputProps {

@@ -4,6 +4,9 @@ import { MarkdownRenderer } from "./MarkdownRenderer.tsx";
 // Constants / Types
 import type { ChatMessage as ChatMessageType } from "../types/chat.ts";
 
+// Styles
+import "./MessageBubble.css";
+
 export interface MessageBubbleProps {
   message: ChatMessageType;
   streamingContent?: string;

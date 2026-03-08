@@ -7,6 +7,9 @@ import { MessageBubble } from "./MessageBubble.tsx";
 // Constants / Types
 import type { ChatMessage, ChatPhase } from "../types/chat.ts";
 
+// Styles
+import "./ChatWindow.css";
+
 export interface ChatWindowProps {
   messages: ReadonlyArray<ChatMessage>;
   phase: ChatPhase;
