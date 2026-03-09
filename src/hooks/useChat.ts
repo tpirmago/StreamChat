@@ -69,7 +69,10 @@ export function useChat(systemPrompt?: string): UseChatReturn {
   // useRef references
   const abortControllerRef = useRef<AbortController | null>(null);
   const provider = useRef(createGroqProvider(systemPrompt ?? "You are a helpful assistant."));
-  provider.current = createGroqProvider(systemPrompt ?? "You are a helpful assistant.");
+
+  useEffect(() => {
+    provider.current = createGroqProvider(systemPrompt ?? "You are a helpful assistant.");
+  }, [systemPrompt]);
 
   // useCallback functions
   const abort = useCallback(() => {
